@@ -42,6 +42,8 @@ class ScientistController extends AbstractController
         $length = $parameters['length'];
         $columnsParam = $parameters['columns'];
         $logger->debug("columnsParam: " . json_encode($columnsParam));
+        $color = $parameters['color'] ?? null;
+        $logger->debug("color: $color");
 //        $columns = array_column($columnsParam, 'name');
         $columns = ["houseNumber", "houseColor", "nationality", "cigarettesBrand", "drinkType", "petType"];
         $orderParam = $parameters['order'];
@@ -57,10 +59,14 @@ class ScientistController extends AbstractController
             "petType" => "pet.Type"
         ];
         $listHelper = new ListHelper($logger, 'sc', $columnsMap);
+        $filters = [];
+        if ($color) {
+            ListHelper::addFilter($filters, "ho.Color = '<value>'", $color);
+        }
         $qb = $listHelper->queryBuilder(
             $em,
             $columns,
-            []
+            $filters
         );
         $logger->debug("query dataTable:" . $qb->getQuery()->getSQL());
         $rows = $qb->getQuery()->setFirstResult($start)->setMaxResults($length)->execute();

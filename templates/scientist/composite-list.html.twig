@@ -55,7 +55,16 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
 <script>
+        // from https://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
+        const params = new Proxy(new URLSearchParams(window.location.search), {
+          get: (searchParams, prop) => searchParams.get(prop),
+        });
+        let color = params.color ? params.color : null;
         $(document).ready(function() {
+            var url = "{{ path('app_scientist_composite_list_data') }}";
+            if (color) {
+                url = url + "?color=" + color;
+            }
             var table = $('#scientists').DataTable({
                 "dom": "lBfrtip",
                 "lengthMenu": [10, 25, 50, 100, 500, 1000],
@@ -74,7 +83,7 @@
                     'csv', 'excel', 'print'
                 ],
                 "ajax": {
-                    "url": "{{ path('app_scientist_composite_list_data') }}"
+                    "url": url
                 }
             });
         });
